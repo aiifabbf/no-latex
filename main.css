@@ -1,0 +1,69 @@
+@media print {
+    @page {
+        border-top: 0.1mm solid black;
+        @top-left {
+            content: "Lorem ipsum";
+        }
+        @top-right {
+            counter-increment: page;
+            content: counter(page);
+        }
+    }
+
+    body {
+        margin: 0;
+    }
+}
+
+@media screen {
+    body {
+        margin: 15mm 31.75mm 25.4mm 31.75mm;
+    }
+}
+
+html {
+    font-size: 12pt;
+    font-family: 'Courier New', Courier, monospace;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    padding: 0;
+}
+
+.meta__title {
+    font-size: 3rem;
+}
+
+.meta__author, .meta__date {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+.main h1::before {
+    counter-increment: section;
+    content: counter(section);
+    margin-right: 1em;
+}
+
+.main--columned {
+    column-count: 2;
+}
+
+/* contents in .main are user content, so don't expect them to obey BEM conventions. */
+.main figure {
+    text-align: center;
+}
+
+.main figure > img {
+    max-width: 100%;
+    min-width: 50%;
+}
+
+.main figure > figcaption::before {
+    counter-increment: figure;
+    content: 'Figure ' counter(figure) ':';
+    margin-right: 1em;
+}
