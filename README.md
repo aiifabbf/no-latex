@@ -39,8 +39,11 @@ This is a demo showing how web technologies like HTML, CSS can smooth your scien
 1. See the demo
 
     ```bash
+    cd  simple-columned-demo
     bash generate.bash
     ```
+
+There are also other demos in this repository, but some of them depend on Chrome to work, and many features like header and footer are not available (since modern browsers have not yet implemented those specs). 
 
 ## How it works
 
@@ -48,13 +51,21 @@ This workflow depends on
 - [WeasyPrint](https://github.com/Kozea/WeasyPrint) to convert HTML to PDF
 - [mathjax-node-page](https://github.com/pkra/mathjax-node-page/) to preprocess HTMLs containing raw LaTeX math formula or written in MathML
 
+Alternatively, if you do not need features like headers or footers, you can safely rely on browsers like Chrome to output PDF.
+
 ### Math formulas
+
+#### With WeasyPrint
 
 WeasyPrint currently does not support JavaScript (and probably will never support it by its nature), so any raw math formulas can only be converted to static HTML or SVG by some preprocessing programs outside it, rather than simply inserting a `<script>` in the HTML to help us take care of it. This is what the first line in `generate.bash` does. Hooray.
 
 However, it is not the whole story yet. Because WeasyPrint does NOT support inline SVG, I have to use commonHTML as the output format of math formulas. This is the purpose of `--output=CommonHTML` flag. The `--dollars` flag is to convert also inline formulas (such as `$ a = b^2 $`)
 
-Also note that it will take a ridiculously long time when you have a lot of 
+Also note that it will take a ridiculously long time when you have a lot of formulas.
+
+#### With Chrome
+
+Use what you would use on a real site, such as KaTeX and MathJax. Chrome outputs much more quickly.
 
 ### Auto-numbering
 
@@ -68,11 +79,25 @@ Referring to an object is even simpler in HTML. You put an attribute `id` on the
 
 However, I have not come up with a pure HTML/CSS approach that can give you the figure number when you refer to it. And this feature is crucial because your potential readers might read your PDF on a real paper sheet instead of a computer screen, and the clickable hyperlinks would become totally meaningless.
 
+#### With Chrome
+
+With a real browser, JavaScript is available, providing much convenience. I have written a simple script (check out `power-ic-report/auto-numbering.js`) to scan the document for figures, tables, bibitems and the hyperlinks that refer to them, and then resolve their numbering: 
+1. add the right numbering onto their `[data-id]` which will later be used by CSS to insert `::before` to display the numbering, e.g., `Figure 1: foo bar` figure caption under a figure.
+1. find the numbering of whatever the hyperlink is referring to, and add the right number onto their `[data-target-id]` which will later be used by CSS to display the numbering, e.g., `As Figure 1 shows, foo bar.` in text.
+
+Works pretty well!
+
 ### Bibliography citation
+
+#### With WeasyPrint
 
 The same problem as figure and table reference.
 
 Then we have a preprocessed HTML, and it is ready to be input to WeasyPrint to produce a PDF. So far so good.
+
+#### With Chrome
+
+Solved with help of JavaScript.
 
 ## Why
 
@@ -110,6 +135,7 @@ While LaTeX has its advantage(s)
 
 ## Feature checklist
 
+With weasyprint, you can
 - [x] Styling with CSS (headers, footers, anything)
 - [x] Display math formulas e.g. `$$ a = b^2 $$`
 - [x] Inline math formulas e.g. `$ a = b^2 $`
@@ -123,6 +149,23 @@ While LaTeX has its advantage(s)
 - [x] Bibliography auto-numbering e.g. `\bibitem`
 - [ ] Bibliography citation e.g. `\cite{shi2018}`
 - [ ] Bibliography auto-generation
+
+With Chrome and not weasyprint, you can
+- [ ] Styling headers or footers (like adding page number on page margin)
+- [x] Display math formulas e.g. `$$ a = b^2 $$` (does not require preprocessing)
+- [x] Inline math formulas e.g. `$ a = b^2 $` (does not require preprocessing)
+- [ ] Formula auto-numbering
+- [ ] Formula reference e.g. `\ref{eq:heat}`
+- [x] Figure and table auto-numbering e.g. `Figure 1`
+- [x] Figure and table reference e.g. `\ref{tab:heat}` (with JavaScript, check out `power-ic-report/auto-numering.js`)
+- [x] Columned layout e.g. `\twocolumn`
+- [ ] Floats e.g. `\begin{float}`
+- [ ] Table of Content auto-generation e.g. `\tableofcontents`
+- [x] Bibliography auto-numbering e.g. `\bibitem`
+- [x] Bibliography citation e.g. `\cite{shi2018}` (with JavaScript, check out `power-ic-report/auto-numering.js`)
+- [ ] Bibliography auto-generation
+
+Generally, if you do not need headers or footers, use the Chrome approach and it saves you plenty of time to wait for rendering.
 
 ## Future
 

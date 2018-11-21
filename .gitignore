@@ -1,10 +1,5 @@
-*
-!README.md
-!main.html
-!main.css
-!main.pdf
-!requirements.txt
-!generate.bash
-!go.svg
-!contributions.png
-!.gitignore
+/*
+!/power-ic-report
+!/simple-columned-demo
+!/README.md
+!/.gitignore

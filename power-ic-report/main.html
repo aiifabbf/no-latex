@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cascode Miller-Compensated Three-Stage Amplifier</title>
+    <link rel="stylesheet" href="main.css">
+
+    <!-- You can either enable MathJax by removing the comment blockquotes below, -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+
+    <!-- ...Or enable KaTeX which is faster but supports more poorly than MathJax by removing the following comment blockquote -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.css" integrity="sha384-9eLZqc9ds8eNjO3TmqPeYcDj8n+Qfa4nuSiGYa6DjLNcv9BtN69ZIulL9+8CqC9Y" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/katex.min.js" integrity="sha384-K3vbOmF2BtaVai+Qk37uypf7VrgBubhQreNQe9aGsz9lB63dIFiQVlJbr92dw2Lx" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/contrib/auto-render.min.js" integrity="sha384-kmZOZB5ObwgQnS/DuDg6TScgOiWWBiVt0plIRkZCmE6rDZGrEOQeHM5PcHi+nyqe" crossorigin="anonymous" onload="renderMathInElement(document.body, {'delimiters': [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script> -->
+
+    <!-- This script is used to scan all figures, tables, bibitems and the hyperlinks that lead to them, and resolve all numbers properly, by setting [data-id] to each figure, table and bibitem and setting [data-target-id] to each hyperlink. Later in CSS I insert a ::before whose content is attr(data-target-id) to present readers a proper numbering. -->
+    <script src="auto-numbering.js"></script>
+</head>
+
+<body>
+    <section class="meta">
+        <h1 class="meta__title">Cascode Miller-Compensated Three-Stage Amplifier</h1>
+        <h2 class="meta__author">Foo Bar</h2>
+        <h2 class="meta__address">School of Optical and Electronic Information</h2>
+    </section>
+
+    <section class="main">
+        <section class="abstract">
+            <h1>Abstract</h1>
+            <p>
+                Silicon technology advancement calls for decrease in transistor size, and as a by-product, the source voltage is also decreasing. Under this circumstance, traditional cascode amplifiers are no longer suitable for achieving high gain and high stability. In the paper, we investigated several historical three-stage amplifier designs and later analyzed the best among them, the CLIA, with manual analysis and numeric simulation.
+            </p>
+        </section>
+
+        <section>
+            <h1>Introduction</h1>
+            <p>
+                As silicon technology develops, the size of each transistor on a chip decreases by a certain fixed divider every one or two generations. To keep the internal electric field relatively unchanged so that transistors are not so vulnerable to breakdown in case of a sudden voltage spike due to noise and external environmental changes, the source voltage $V_{\rm DD}$ has to decrease according to the size.
+            </p>
+            <p>
+                However, this brings a problem: As traditional cascode amplifiers have been heavily dependent on a high source voltage to work properly and to provide high voltage gain, those amplifiers have to be redesigned to work under low and ultra-low source voltage. That is where three-stage amplifiers come to the front stage. As <cite><a href="#leung2000"></a></cite><cite><a href="#lee2003"></a></cite> show, three-stage amplifiers can work better than cascode amplifiers in terms of power efficiency and bandwidth.
+            </p>
+            <p>
+                As everything has its pros and cons, three-stage amplifiers have its own drawbacks as well. That is, since a three-stage amplifier has three stages, every stage introduces a pole, which makes the whole amplifier a 3-pole system, thus brings about severe potential vulnerabilities concerning stability. Since then, researchers have been actively exploring various frequency compensation techniques to make the most of the advantages brought by three-stage amplifiers, such as power efficiency and bandwidth, but without touching its Achilles' Heel, such as potential instability. The mainstream solutions can be put into the following categories:
+                <ul>
+                    <li>
+                        Nested Miller compensation (referred to as NMC), as shown in <cite><a href="#gray2001"></a></cite>
+                    </li>
+                    <li>
+                        Damping-factor-control frequency compensation (referred to as DFCFC), as shown in <cite><a href="#leung2000"></a></cite>
+                    </li>
+                    <li>
+                        Simple Miller compensation (referred to as SMC), as shown in <cite><a href="#leung2000"></a></cite>
+                    </li>
+                    <li>
+                        Cross feed-forward cascode compensation (referred to as CFCC) ,as shown in <cite><a href="#lee2003"></a></cite>
+                    </li>
+                </ul>
+            </p>
+            <figure>
+                <img src="nmc,etc.png" alt="">
+                <figcaption>(a) NMC, (b) DFCFC, (c) SMC, (d) CFFC</figcaption>
+            </figure>
+            <figure id="fig-before-comparisons">
+                <img src="before-comparisons.png" alt="">
+                <figcaption>Comparison of the frequency responses of the 4 structures. 1 is NMC, 2 is NMC, 3 is DFCFC, 4 is CMC and 5 is our proposed design CLIA. </figcaption>
+            </figure>
+            <p>
+                As Figure <a href="#fig-before-comparisons"></a> shows, there exists a clear evolution path from NMC to CMC. NMC (shown in Figure <a href="#fig-before-comparisons"></a> as curve 1), which nevertheless has the simplest compensation structure and has a low Q-factor, has a big problem in its unbearably small bandwidth, smaller even than single-stage and two-stage amplifiers. To solve the bandwidth trouble, the inner loop is removed, an inverse amplifying stage is added and parallelled to the previously existing outer loop compensation capacitor $C_{\rm m1}$, and thus the bandwidth is greatly improved (shown in Figure <a href="#fig-before-comparisons"></a> as curve 2).
+            </p>
+            <p>
+                However, the evolved structure experiences a high Q-factor and thus introduces instability if not configured properly. To control Q-factor, a damping-factor control unit is parallelled to the output node of the 2nd stage, and thus the structure evolved into DFCFC (shown in Figure <a href="#fig-before-comparisons"></a> as curve 3).
+            </p>
+            <p>
+                Later, an even higher bandwidth is required, so the outer compensation loop inherited from the ancient SMC has to be replaced with a cascode Miller compensation (CMC) unit to boost bandwidth. Again, the Q-factor introduces vulnerabilities to instability, and it is time to present our proposed design CLIA <cite><a href="#tan2015"></a></cite>.
+            </p>
+        </section>
+
+        <section>
+            <h1>CLIA Structure Explained</h1>
+            <p>
+                This section is managed in the following manner: First, the small-signal structure is presented and qualitatively, quantitatively analyzed. Second, the circuit that implements the small-signal structure is presented and quantitatively analyzed.
+            </p>
+            <section>
+                <h2>Small-Signal Structure</h2>
+                <figure id="fig-clia-small-signal">
+                    <img src="clia-explained.png" alt="">
+                    <figcaption>Small signal model of CLIA amplifier. 1 is a cascode Miller compensation unit, 2 is an RC network and 3 is a feed-forward path.</figcaption>
+                </figure>
+                <p>
+                    The small-signal structure is presented as Figure <a href="#fig-clia-small-signal"></a>. The 3 compensation blocks have been marked as 1, 2, 3.
+                </p>
+                <p>
+                    The CMC unit (marked as block 1 in Figure <a href="#fig-clia-small-signal"></a>), is inherited from CMC amplifiers and is used to eliminate the feed-forward signal path in SMC thus to extend the bandwidth.
+                </p>
+                <p>
+                    The local impedance attenuation (LIA) block (marked as block 2 in Figure <a href="#fig-clia-small-signal"></a>) is a parallel compensation unit that consists of a series of $R_{\rm a}$ and $C_{\rm a}$. Its purpose is to reduce the high-frequency small-signal output resistance at the 2nd stage, and later in the qualitative analysis, one can see that the complex poles are 'dominated' by this LIA unit, which means that the value of $R_{\rm a}$ and $C_{\rm a}$ is the deciding factor in positioning the complex poles.
+                </p>
+                <p>
+                    The feed-forward path (marked as block 3 in Figure <a href="#fig-clia-small-signal"></a>), made up with an inverse amplifier $-g_{\rm mf}$, connecting the output of stage 1 and the final output, improves large-signal performance. 
+                </p>
+            </section>
+            <section>
+                <h2>Small-Signal Transfer Function</h2>
+                <p>
+                    To derive the exact transfer function $H(s)$ is a simple task which we have done a thousand of times: First, convert the small-signal circuit into a system of linear equations; Second, feed the system of equations to some symbolic equation solver such as Python Sympy or Matlab. The Proposed Design CLIAhen a few seconds later, you will be presented with the exact transfer function. What a nice thing.
+                </p>
+                <p>
+                    However, despite the fact that our small-signal circuit looks explicit, the exact transfer function is no way simple. Except that the number of poles and zeros can be seen from the greatest exponent, that the DC gain can be derived by substituting $s$ with 0, and that the particular frequency response under a specific configuration can be plotted, nothing else valuable, insightful or interpretable can be derived from this symbolic expression, by us or by the computer. For example, the bandwidth, the phase margin and the gain margin, which are the three most important values in stability analysis, can by no means be revealed from this complex expression.
+                </p>
+                <p>
+                    Thus, appropriate approximation to this small-signal transfer function is crucial. Based on the following 2 presumptions, it is believed that our transfer function can be reduced to a reasonable size, but without losing too much accuracy:
+                    <ul>
+                        <li>
+                            The gain of every single stage is way much greater than 1
+                        </li>
+                        <li>
+                            Compensation capacitors $C_{\rm m1}, C_{\rm a}$ and output node capacitor $C_3$ are much greater than internal output node capacitor $C_1, C_2$
+                        </li>
+                    </ul>
+                </p>
+                <p>
+                    $$
+                        \begin{aligned}
+                            H(s) &\approx {g_{\rm m1} g_{\rm m2} g_{\rm m3} R_1 R_2 R_3 (1 + s R_{\rm a} C_{\rm a}) \over (1 + s g_{\rm m2} g_{\rm m3} R_1 R_2 R_3 C_{\rm m1}) (1 + s k R_{\rm a} C_{\rm a})} \\
+                            &\cdot {1 + s {C_{\rm m1} \over 2 g_{\rm mc}} \over 1 + s{C_1 C_3 \over k g_{\rm m2} g_{\rm m3} R_{\rm a} C_{\rm m1}} + s^2 {C_1 C_3 \over k g_{\rm m2} g_{\rm m3} g_{\rm mc} R_{\rm a}}}
+                        \end{aligned}
+                    $$
+                    where $k$ is defined as
+                    $$
+                        k = 1 + {C_3 \over g_{\rm m2} g_{\rm m3} R_1 R_{\rm a} C_{\rm m1}}
+                    $$
+                    from this expression, we can derive that the system has 2 zeros $z_1, z_2$, and 4 poles $p_0, p_1, p_{21}, p_{22}$ with $p_{21}, p_{22}$ paired as conjugate poles (they share the same real value and their imagine values are opposite). We can also conclude that the DC gain is
+                    $$
+                        A = g_{\rm m1} g_{\rm m2} g_{\rm m3} R_1 R_2 R_3
+                    $$
+                </p>
+                <p>
+                    Ordered by their distance to the real axis, the zeros in their symbolic form are
+                    $$
+                        \left\{\begin{aligned}
+                            z_1 &= - {1 \over R_{\rm a} C_{\rm a}} \\
+                            z_2 &= - {2 g_{\rm mc} \over C_{\rm m1}}
+                        \end{aligned}\right. \textrm{or} \left\{\begin{aligned}
+                            z_2 &= - {1 \over R_{\rm a} C_{\rm a}} \\
+                            z_1 &= - {2 g_{\rm mc} \over C_{\rm m1}}
+                        \end{aligned}\right.
+                    $$
+                    Actually, we do not know which zero is closer to the real axis.
+                </p>
+                <p>
+                    For poles, their relative distance to the real axis is more explicit, at least the fact is clear that this system has a pole very close to the real axis.
+                    $$
+                        \left\{\begin{aligned}
+                            p_0 &= - {1 \over g_{\rm m2} g_{\rm m3} R_1 R_2 R_3 C_{\rm m1}} \\
+                            p_1 &= - {1 \over k R_{\rm a} C_{\rm a}} \\
+                            p_{21}, p_{22} &= - {g_{\rm mc} \over 2 C_{\rm m1}} \\
+                                &\pm \sqrt{{g_{\rm mc}^2 \over 4 C_{\rm m 1}^2} - {g_{\rm m2} g_{\rm m3} g_{\rm mc} R_{\rm a} \over C_1 C_3}}
+                        \end{aligned}\right.
+                    $$
+                    and $p_1$ and $p_{21}, p_{22}$ seem to be close to each other as well.
+                </p>
+                <figure id="fig-pz">
+                    <img src="pz.png" alt="">
+                    <figcaption>Zeros and poles illusion plot</figcaption>
+                </figure>
+                <p>
+                    However, this is not the whole story. Note that $z_1$ and $p_1$ differ from each other by only a factor $k$, and this might give us a hint to perform a pole-zero cancellation approximation, since if $k \approx 1$, $z_1$ and $p_1$ can be considered close enough to each other that they almost collide. In fact, we find it feasible, because based on presumption 2, $C_3 \approx C_{\rm m1}$, so they can reduce each other
+                    $$
+                        k \approx 1 + {1 \over g_{\rm m2} g_{\rm m3} R_1 R_{\rm a}}
+                    $$
+                    and based on presumption 1, $g_{\rm m2} g_{\rm m3} R_1 R_{\rm a} \gg 1$, so
+                    $$
+                        k \approx 1
+                    $$
+                    so we removed $p_1$ and $z_1$. It is time to update our list of zeros and poles
+                    $$
+                        \left\{\begin{aligned}
+                            z_2 &= - {2 g_{\rm mc} \over C_{\rm m1}} \\
+                            p_0 &= - {1 \over g_{\rm m2} g_{\rm m3} R_1 R_2 R_3 C_{\rm m1}} \\
+                            p_{21}, p_{22} &= - {g_{\rm mc} \over 2 C_{\rm m1}} \\
+                                &\pm \sqrt{{g_{\rm mc}^2 \over 4 C_{\rm m 1}^2} - {g_{\rm m2} g_{\rm m3} g_{\rm mc} R_{\rm a} \over C_1 C_3}}
+                        \end{aligned}\right.
+                    $$
+                    so at last our final version of transfer function is given as
+                    $$
+                        \begin{aligned}
+                            H(s) &\approx {g_{\rm m1} g_{\rm m2} g_{\rm m3} R_1 R_2 R_3 \over 1 + s g_{\rm m2} g_{\rm m3} R_1 R_2 R_3 C_{\rm m1}} \\
+                            &\cdot {1 + s {C_{\rm m1} \over 2 g_{\rm mc}} \over 1 + s{C_1 C_3 \over g_{\rm m2} g_{\rm m3} R_{\rm a} C_{\rm m1}} + s^2 {C_1 C_3 \over g_{\rm m2} g_{\rm m3} g_{\rm mc} R_{\rm a}}}
+                        \end{aligned}
+                    $$
+                </p>
+            </section>
+            <section>
+                <h2>Circuit Implementation</h2>
+                <figure id="fig-clia-schematic">
+                    <img src="clia-schematic-explained.png" alt="">
+                    <figcaption>Circuit implementation</figcaption>
+                </figure>
+                <p>
+                    The small-signal structure shown in Figure <a href="#fig-clia-small-signal"></a> can be implemented by the circuit shown in Figure <a href="#fig-clia-schematic"></a>. 
+                </p>
+                <p>
+                    M11 and M12 are the input differential pair, and they implement the 1st amplifying stage $g_{\rm m1}$ in the small-signal structure. M16 is the cascode transistor, implementing the non-inverting amplifying stage $g_{\rm mc}$ in the cascode Miller compensation unit. M21, M23 and M24 implement the 2nd stage. Assuming their small-signal transconductance as $g_{\rm m21}, g_{\rm m23}, g_{\rm m24}$, the 2nd stage transconductance in Figure <a href="#fig-clia-small-signal"></a> can be expressed as $g_{\rm m24} (g_{\rm m21} / g_{\rm m23})$. M32 implements the 3rd amplifying stage. $g_{\rm m3}$ is just $g_{\rm m32}$. M31 implements the inverting amplifying stage in the feed-forward path, and its transconductance $g_{\rm m31}$ is $g_{\rm mf}$ in the small-signal structure Figure <a href="#fig-clia-small-signal"></a>
+                </p>
+            </section>
+        </section>
+
+        <section>
+            <h1>CLIA Structure in Simulation</h1>
+            <section>
+                <h2>Under Default Configuration</h2>
+                <p>
+                    Paper <cite><a href="#tan2015"></a></cite> provides a table of reference sizes for MOSFETs and reference values for compensation components under $0.13 \,{\rm \mu m}$ CMOS technology. Since in this assignment, we are given a $0.18 \,{\rm \mu m}$ technology, these reference values may or may not work as properly as they do in $0.13 \,{\rm \mu m}$ technology, but these values can be a good start point for us.
+                </p>
+                <p>
+                    First, we did the AC simulation directly to see if we are fortunate enough to get these values working under a $0.18 \,{\rm \mu m}$ technology. However, we are not so lucky. The frequency response is wrong in every way.
+                </p>
+                <p>
+                    So, it is necessary to check each MOSFET, particularly their working region, because if they are working under linear region, they are unable to amplify. After performing the DC simulation, several transistors, including M24, M31 and M32, are identified as not working inside saturation region. After modifying their sizes to force all of them work inside saturation region, the frequency response becomes identifiable.
+                </p>
+                <figure>
+                    <table id="tab-mosfet-sizes">
+                        <thead>
+                            <th></th>
+                            <th>size</th>
+                            <th>$g_{\rm m}({\rm \mu S})$</th>
+                            <th>$g_{\rm ds}({\rm nS})$</th>
+                            <th>$C_{\rm gd}({\rm fF})$</th>
+                            <th>$C_{\rm gs}({\rm fF})$</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>M10</td>
+                                <td>$2 \times (1 / 2)$</td>
+                                <td>$8.80938$</td>
+                                <td>$619.421$</td>
+                                <td>$1.17701$</td>
+                                <td>$22.8149$</td>
+                            </tr>
+                            <tr>
+                                <td>M11, M12</td>
+                                <td>$2 / 6$</td>
+                                <td>$3.94907$</td>
+                                <td>$4.62336$</td>
+                                <td>$0.648892$</td>
+                                <td>$67.5331$</td>
+                            </tr>
+                            <tr>
+                                <td>M17, M18</td>
+                                <td>$2 / 1$</td>
+                                <td>$12.9689$</td>
+                                <td>$59.8375$</td>
+                                <td>$0.654176$</td>
+                                <td>$11.0746$</td>
+                            </tr>
+                            <tr>
+                                <td>M15, M16</td>
+                                <td>$1 / 1$</td>
+                                <td>$17.4262$</td>
+                                <td>$65.7085$</td>
+                                <td>$0.363902$</td>
+                                <td>$3.49798$</td>
+                            </tr>
+                            <tr>
+                                <td>M13, M14</td>
+                                <td>$3 \times (0.4 / 3)$</td>
+                                <td>$17.227$</td>
+                                <td>$36.4562$</td>
+                                <td>$0.441493$</td>
+                                <td>$17.5244$</td>
+                            </tr>
+                            <tr>
+                                <td>M21</td>
+                                <td>$2 / 0.2$</td>
+                                <td>$71.4606$</td>
+                                <td>$1.00908$</td>
+                                <td>$0.64713$</td>
+                                <td>$2.38718$</td>
+                            </tr>
+                            <tr>
+                                <td>M22</td>
+                                <td>$2 \times (0.4 / 3)$</td>
+                                <td>$11.4982$</td>
+                                <td>$22.248$</td>
+                                <td>$0.292293$</td>
+                                <td>$11.6797$</td>
+                            </tr>
+                            <tr>
+                                <td>M23</td>
+                                <td>$0.5 / 0.5$</td>
+                                <td>$45.158$</td>
+                                <td>$433.669$</td>
+                                <td>$0.181136$</td>
+                                <td>$1.42163$</td>
+                            </tr>
+                            <tr>
+                                <td>M24</td>
+                                <td>$0.5 / 1.7$</td>
+                                <td>$15.604$</td>
+                                <td>$39.5246$</td>
+                                <td>$0.181004$</td>
+                                <td>$4.31675$</td>
+                            </tr>
+                            <tr>
+                                <td>M25</td>
+                                <td>$3 \times (1 / 1)$</td>
+                                <td>$18.391$</td>
+                                <td>$149.558$</td>
+                                <td>$1.00926$</td>
+                                <td>$17.0732$</td>
+                            </tr>
+                            <tr>
+                                <td>M26</td>
+                                <td>$3 \times (1 / 2)$</td>
+                                <td>$14.2963$</td>
+                                <td>$41.5098$</td>
+                                <td>$0.984962$</td>
+                                <td>$34.0196$</td>
+                            </tr>
+                            <tr>
+                                <td>M31</td>
+                                <td>$3 \times (4 / 0.2)$</td>
+                                <td>$403.09$</td>
+                                <td>$7.61647$</td>
+                                <td>$3.89339$</td>
+                                <td>$14.2498$</td>
+                            </tr>
+                            <tr>
+                                <td>M32</td>
+                                <td>$4 / 5$</td>
+                                <td>$108.471$</td>
+                                <td>$177.722$</td>
+                                <td>$1.48874$</td>
+                                <td>$109.293$</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <figcaption>MOSFET sizes used in simulation, transconductance $g_{\rm m}$ and drain-source small-signal resistance $r_{\rm ds}$ derived from DC simulation</figcaption>
+                </figure>
+                <figure id="tab-other-sizes">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td>$C_{\rm L}$</td>
+                                <td>560 pF</td>
+                            </tr>
+                            <tr>
+                                <td>$R_{\rm a}$</td>
+                                <td>250 kΩ</td>
+                            </tr>
+                            <tr>
+                                <td>$C_{\rm a}$</td>
+                                <td>0.3 pF</td>
+                            </tr>
+                            <tr>
+                                <td>$C_{\rm m1}$</td>
+                                <td>0.5 pF</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <figcaption>Values for compensation components</figcaption>
+                </figure>
+                <figure id="fig-test-clia-ac">
+                    <img src="test-clia-ac.png" alt="">
+                    <figcaption>Simulated frequency response</figcaption>
+                </figure>
+                <figure id="fig-test-clia-pz">
+                    <img src="test-clia-pz.png" alt="">
+                    <figcaption>Simulated zeros and poles</figcaption>
+                </figure>
+                <p>
+                    From Figure <a href="#fig-test-clia-pz"></a>, zeros and poles can be seen
+                    $$
+                        \left\{\begin{aligned}
+                            p_0 &= - 2.25 \,{\rm Hz} \\
+                            z_1 &= - 1.23 \,{\rm MHz} \\
+                            p_1 &= - 1.58 \,{\rm MHz} \\
+                            p_{21}, p_{22} &= - 1.52 \pm j3.66 \,{\rm MHz} \\
+                            z_2 &= - 7.01 \,{\rm MHz}
+                        \end{aligned}\right.
+                    $$
+                </p>
+                <figure>
+                    <table id="tab-test-clia-ac">
+                        <thead>
+                            <th>Origin</th>
+                            <th>PM(deg)</th>
+                            <th>GM(dB)</th>
+                            <th>UGF(Hz)</th>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>This work</td>
+                                <td>77.54</td>
+                                <td>7.535</td>
+                                <td class="text--fail">1.571 M</td>
+                            </tr>
+                            <tr>
+                                <td>Paper <cite><a href="#tan2015"></a></cite></td>
+                                <td>56.27</td>
+                                <td>6.549</td>
+                                <td>3.519 M</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <figcaption>Results from simulation</figcaption>
+                </figure>
+                <p>
+                    It is important, however, to compare the simulation results with manual analysis. According to the explanation in circuit implementation section, how each MOSFET contributes to each block in small-signal structure is now quite clear. With
+                    $$
+                        \left\{\begin{aligned}
+                            g_{\rm m1} &= g_{\rm 11} = 3.94907 \cdot 10^{-6} \\
+                            g_{\rm m2} &= {g_{\rm m21} g_{\rm 24} \over g_{\rm 23}} = 2.46895 \cdot 10^{-5} \\
+                            g_{\rm m3} &= g_{\rm m32} = 108.471 \cdot 10^{-6} \\
+                            g_{\rm mc} &= g_{\rm m16} = 17.4262 \cdot 10^{-6} \\
+                            g_{\rm mf} &= g_{\rm m31} = 403.09 \cdot 10^{-6}
+                        \end{aligned}\right.
+                    $$
+                    and with
+                    $$
+                        \left\{\begin{aligned}
+                            R_1 &\approx r_{\rm ds18} // r_{\rm ds16} = 7.965207 \cdot 10^6 \\
+                            R_2 &\approx r_{\rm ds24} // r_{\rm ds25} = 5.288693 \cdot 10^6 \\
+                            R_3 &\approx r_{\rm ds32} // r_{\rm ds31} = 5.395533 \cdot 10^6
+                        \end{aligned}\right.
+                    $$
+                    and with
+                    $$
+                        \left\{\begin{aligned}
+                            C_1 &\approx C_{\rm gd16} + C_{\rm gs21} + C_{\rm gs31} = 16.63734 \cdot 10^{-15} \\
+                            C_2 &\approx C_{\rm gs32} = 109.293 \cdot 10^{-15} \\
+                            C_3 &\approx C_{\rm L} = 560 \cdot 10^{-12}
+                        \end{aligned}\right.
+                    $$
+                    so under manual analysis, all zeros and poles are
+                    $$
+                        \left\{\begin{aligned}
+                            z_2 &= - {2 g_{\rm mc} \over C_{\rm m1}} = 69.7048 \,{\rm MHz} \\
+                            p_0 &= - {1 \over g_{\rm m2} g_{\rm m3} R_1 R_2 R_3 C_{\rm m1}} = 3.28567 \,{\rm Hz} \\
+                            p_{21}, p_{22} &= - {g_{\rm mc} \over 2 C_{\rm m1}} \\
+                                &\pm \sqrt{{g_{\rm mc}^2 \over 4 C_{\rm m 1}^2} - {g_{\rm m2} g_{\rm m3} g_{\rm mc} R_{\rm a} \over C_1 C_3}} \\
+                                &= - 17.426 \pm j 30.800 \,{\rm MHz}
+                        \end{aligned}\right.
+                    $$
+                </p>
+                <p>
+                    And the DC gain is
+                    $$
+                        A = 2.403812 \,{\rm M} \approx 127.618 \,{\rm dB}
+                    $$
+                    no surprise at all.
+                </p>
+                <p>
+                    And the unity-gain frequency is
+                    $$
+                        f_0 = 8.167 \,{\rm MHz}
+                    $$
+                    at $f_0$, the phase is -176.5729 deg, which means
+                    $$
+                        \textrm{PM} = 96.818 \,{\rm deg}
+                    $$
+                </p>
+                <figure>
+                    <img src="manual-clia-ac.png" alt="">
+                    <figcaption>Frequency response from manual analysis</figcaption>
+                </figure>
+            </section>
+            <section>
+                <h2>$C_{\rm L}$'s Effect on Frequency Response</h2>
+                <figure id="fig-different-cl">
+                    <img src="test-clia-ac-different-cl.png" alt="">
+                    <figcaption>Frequency responses with different $C_{\rm L}$ values</figcaption>
+                </figure>
+                <p>
+                    From Figure <a href="#fig-different-cl"></a>, one can see that greater $C_{\rm L}$ results in smaller PM. Thus, CLIA has a potential vulnerability as well. It does not allow a too big load capacitor, because its stability would otherwise be jeopardized by decreasing PM.
+                </p>
+            </section>
+            <section>
+                <h2>$R_{\rm a}$'s Effect on Frequency Response</h2>
+                <figure id="fig-different ra">
+                    <img src="test-clia-ac-different-ra.png" alt="">
+                    <figcaption>Frequency responses with different $R_{\rm a}$ values</figcaption>
+                </figure>
+                <p>
+                    From Figure <a href="#fig-different-ra"></a>, one can see that a bigger $R_{\rm a}$ negatively affects PM as well. A bigger $R_{\rm a}$ will boost Q-factor, creating multiple (in this case, 2) unity-gain frequencies $f_0$.
+                </p>
+            </section>
+        </section>
+        <section>
+            <h1>Conclusion</h1>
+            <p>
+                In this paper, we analyzed the small-signal structure of CLIA amplifier and the circuit that implements CLIA, both in symbolic and simulation. There exist, however, several disagreement between manual analysis and numeric simulation that would require more investigation.
+            </p>
+        </section>
+        <section>
+            <h1>References</h1>
+            <ul class="bibliography">
+                <li class="bibliography__item" id="tan2015">
+                    <span class="bibliography__item__authors">M. Tan and W.-H. Ki</span>
+                    <span class="bibliography__item__title">A cascode Miller-compensated three-stage amplifier with
+                        local impedance attenuation for optimized complex-pole control</span>
+                    <span class="bibliography__item__journal">IEEE J. Solid-State Circuits</span>
+                </li>
+                <li class="bibliography__item" id="leung2000">
+                    <span class="bibliography__item__authors">K. N. Leung, P. K. T. Mok, W. H. Ki, and J. K. O. Sin</span>
+                    <span class="bibliography__item__title">Three-stage
+                        large capacitive load amplifier with damping-factor-control frequency compensation</span>
+                    <span class="bibliography__item__journal">IEEE J. Solid-State Circuits</span>
+                </li>
+                <li class="bibliography__item" id="lee2003">
+                    <span class="bibliography__item__authors">H. Lee and P. K. T. Mok</span>
+                    <span class="bibliography__item__title">Active-feedback frequency-compensation technique for
+                        low-power multistage amplifiers</span>
+                    <span class="bibliography__item__journal">IEEE J. Solid-State Circuits</span>
+                </li>
+                <li class="bibliography__item" id="gray2001">
+                    <span class="bibliography__item__authors">P. R. Gray, P. J. Hurst, S. H. Lewis, and R. G. Meyer</span>
+                    <span class="bibliography__item__title">Analysis and Design of Analog Integrated Circuits</span>
+                    <span class="bibliography__item__journal">Wiley</span>
+                </li>
+            </ul>
+        </section>
+    </section>
+</body>
+
+</html>
