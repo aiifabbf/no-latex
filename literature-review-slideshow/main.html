@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Literature Review</title>
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/default.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+
+    <script src="auto-numbering.js"></script>
+</head>
+
+<body>
+    <template>
+        <div class="frame">
+            <div class="frame__title"></div>
+            <div class="frame__subtitle"></div>
+            <div class="frame__content"></div>
+        </div>
+    </template>
+
+    <div class="frame frame--hero">
+        <section class="meta">
+            <h1 class="meta__title">Literature Review</h1>
+            <h2 class="meta__author">SHI Yuchen</h2>
+            <h2 class="meta__date">2018/11/23</h2>
+        </section>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title">Literatures</h1>
+        <ul class="bibliography">
+            <li class="bibliography__item" id="dreyer">
+                <span class="bibliography__item__authors">Alexander Dreyer</span>
+                <span class="bibliography__item__title">Combination of Symbolic and Interval-Numeric Methods for Analysis of Analog Circuits</span>
+            </li>
+            <li class="bibliography__item" id="shi">
+                <span class="bibliography__item__authors">Guoyong Shi</span>
+                <span class="bibliography__item__title">Topological Approach to Symbolic Pole–Zero Extraction Incorporating Design Knowledge</span>
+                <span class="bibliography__item__journal">IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Problem stated</h2>
+        <div class="frame__content">
+            <p>
+                Circuits are representable using a system of equations.
+                <!-- $$
+                \left\{\begin{aligned}
+                    f_1(x_1) &= y_1 \\
+                    f_2(x_2) &= y_2 \\
+                    \vdots \\
+                    f_n(x_n) &= y_n
+                \end{aligned}\right.
+                $$ -->
+                $$
+                \vec{f}(\vec{x}) = \vec{0}
+                $$
+            </p>
+            <p>
+                Difficulties in symbolic simulation
+                <ul>
+                    <li>No way to work out closed-form solution if too many non-linear equations</li>
+                    <li>Solution becomes <i>very</i> complex even if all, but many, linear equations</li>
+                </ul>
+            </p>
+            <p>
+                Numeric simulation is the only way out.
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Problem stated</h2>
+        <div class="frame__content">
+            <p>
+                Numeric simulation is not perfect either.
+                <ul>
+                    <li>Floating-point operations lead to error accumulation $\to$ use rational operations</li>
+                    <li>Model does not perfectly symbolize real-world transistors $\to$ ?</li>
+                </ul>
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Interval arithmetic</h2>
+        <div class="frame__content">
+            <p>Take model imperfection into consideration in advance using interval-arithmetic-based simulation</p>
+            <p>
+                Define object <i>interval</i> $[x] := [\underline{x}, \overline{x}]$ as the interval for variable $x$.
+            </p>
+            <p>
+                Introduce the interval arithmetic.
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Interval arithmetic</h2>
+        <div class="frame__content">
+            <p>
+                Define basic operations $\circ \in \{+, -, \times, /\}$ for intervals $[x], [y]$:
+                $$
+                [x] \circ [y] = [\underline{z}, \overline{z}] = [z]
+                $$
+                where
+                $$
+                \left\{\begin{aligned}
+                \underline{z} &= \min\left\{\underline{x} \circ \underline{y}, \underline{x} \circ \overline{y}, \overline{x} \circ \underline{y}, \overline{x} \circ \overline{y}\right\} \\
+                \overline{z} &= \max\left\{\underline{x} \circ \underline{y}, \underline{x} \circ \overline{y}, \overline{x} \circ \underline{y}, \overline{x} \circ \overline{y}\right\}
+                \end{aligned}\right.
+                $$
+            </p>
+            <p>
+                If function $f(x, y)$ is independently monotonous for $x, y$, then the rules above applies too for $f([x], [y])$.
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Dependence problem</h2>
+        <div class="frame__content">
+            <strong>Problem alert</strong>
+            <p>
+                What should $[x] - [x]$ be?
+                <ul>
+                    <li>From intuition: $[0, 0]$</li>
+                    <li>By definition: $[\underline{x}^2, \overline{x}^2]$</li>
+                </ul>
+                Namely, <i>the dependence problem.</i>
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Dependence problem</h2>
+        <div class="frame__content">
+            <figure>
+                <img src="1-dependence-problem.png" alt="">
+                <figcaption>Dependence problem exemplified, in a non-linear circuit</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Dependence problem</h2>
+        <div class="frame__content frame__content--columned">
+            <figure>
+                <img src="1-dependence-problem.png" alt="">
+                <figcaption>Dependence problem exemplified, in a non-linear circuit</figcaption>
+            </figure>
+            <p>
+                If I am to symbolize this circuit...(in the hope of not letting <i>any</i> variable occur twice)
+            </p>
+            <p>
+                $$
+                \left\{\begin{aligned}
+                & {V_{\rm C} - V_{\rm DD} \over R_{\rm C}} + \underbrace{I_{\rm CE}(V_{\rm C}, V_{\rm B})}_\text{non-linear} = 0 \\
+                & {V_{\rm B} - V_{\rm DD} \over R_{\rm B}} + \underbrace{I_{\rm BE}(V_{\rm C}, V_{\rm B})}_\text{non-linear} = 0
+                \end{aligned}\right.
+                $$
+            </p>
+            <p>
+                I avoided $R_{\rm C}$, but could not avoid $V_{\rm DD}$.
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Example: linear</h2>
+        <div class="frame__content frame__content--columned">
+            <figure>
+                <img src="1-rlc.png" alt="">
+                <figcaption>Interval arithmetic exemplified, in a linear circuit</figcaption>
+            </figure>
+            <p>
+                We would like to know how the current flowing past $V_0$ will react to $R_{\rm B}$ within an interval $[R_{\rm B}]$.
+            </p>
+            <p>
+                That is, with different $R_{\rm B}$, what interval will ${V_0 - V_2 \over R_{\rm A}}$ be inside?
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Example: linear</h2>
+        <div class="frame__content">
+            <p>
+                $$
+                \left\{\begin{aligned}
+                & {V_2 - V_0 \over R_{\rm A}} + V_2 s C_1 + {V_2 - V_3 \over s L_1} = 0 \\
+                & {V_3 - V_2 \over s L_1} + V_3 s C_2 + {V_3 \over R_{\rm B}} = 0
+                \end{aligned}\right.\\
+
+                \downarrow\\
+
+                \underbrace{\left(\begin{matrix}
+                {1 \over R_{\rm A}} + s C_1 + {1 \over s L_1} & - {1 \over s L_1} \\
+                - {1 \over s L_1} & {1 \over s L_1} + s C_2 + {1 \over R_{\rm B}}
+                \end{matrix}\right)}_{A}
+                \underbrace{\left(\begin{matrix}
+                V_2 \\
+                V_3 \\
+                \end{matrix}\right)}_{X} =
+                \underbrace{\left(\begin{matrix}
+                {V_0 \over R_{\rm A}} \\
+                0
+                \end{matrix}\right)}_{B}\\
+
+                \downarrow\\
+
+                \begin{aligned}
+                |V_2(j \omega)| \in &[\min\{A(\underline{R_{\rm B}})^{-1} B)_1(j \omega), (A(\overline{R_{\rm B}})^{-1} B)_1(j \omega)\}, \\
+                &\max\{A(\underline{R_{\rm B}})^{-1} B)_1(j \omega), (A(\overline{R_{\rm B}})^{-1} B)_1(j \omega)\}]
+                \end{aligned}
+                $$
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Example: linear</h2>
+        <div class="frame__content">
+            <p>
+                What is this??
+                $$
+                \begin{aligned}
+                |V_2(j \omega)| \in &[\min\{A(\underline{R_{\rm B}})^{-1} B)_1(j \omega), (A(\overline{R_{\rm B}})^{-1} B)_1(j \omega)\}, \\
+                &\max\{A(\underline{R_{\rm B}})^{-1} B)_1(j \omega), (A(\overline{R_{\rm B}})^{-1} B)_1(j \omega)\}]
+                \end{aligned}
+                $$
+            </p>
+            <p>
+                It means,
+                <ol>
+                    <li>For every Hz, you take $\underline{R_{\rm B}}$ and $\overline{R_{\rm B}}$ into $A$</li>
+                    <li>Work out $X$ by $A^{-1} B$, but since you have $\underline{R_{\rm B}}$ and $\overline{R_{\rm B}}$, you will get 2 copies of $X$</li>
+                    <li>Work out your target function $I$ with 2 copies of $X$, and get $\underline{I}, \overline{I}$</li>
+
+                </ol>
+                <p>
+                    $[\underline{I}, \overline{I}]$ will be $I$'s interval if $R_{\rm B}$ is in $[\underline{R_{\rm B}}, \overline{R_{\rm B}}]$
+                </p>
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Example: linear</h2>
+        <div class="frame__content">
+            <strong>Time complexity $O(2^n)$ alert</strong>
+            <p>
+                If you have $n$ independent variables that have their own intervals, you have to
+                <ol>
+                    <li>Solve $AX = B$ by applying $2^n$ times, as for each variable you try twice</li>
+                    <li>As you solve, find the minimum and the maximum</li>
+                </ol>
+            </p>
+            <p>
+                ...and remember it's just linear. Non-linear solving takes much more time.
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Example: linear</h2>
+        <div class="frame__content">
+            <figure>
+                <img src="1-test-rlc.png" alt="">
+                <figcaption>Current frequency response, with $R_{\rm B} \in [0.9e3, 1.1e3]$</figcaption>
+            </figure>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#dreyer"></a></cite></h1>
+        <h2 class="frame__subtitle">Conclusion</h2>
+        <div class="frame__content">
+            <p>
+                Problems
+                <ul>
+                    <li>$O(2^n)$ time complexity</li>
+                    <li>I did not get his result</li>
+                </ul>
+            </p>
+            <p>
+                Inspiration
+                <ul>
+                    <li>
+                        Random variable
+                        <p>
+                            possibility density for each instance inside interval
+                        </p>
+                    </li>
+                    <li>
+                        Monte-Carlo method
+                    </li>
+                </ul>
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#shi"></a></cite></h1>
+        <h2 class="frame__subtitle">Problem stated</h2>
+        <div class="frame__content">
+            <p>
+                Automatic extraction of <i>human-readable</i> poles and zeros in symbolic form
+            </p>
+            <p>
+                Why?
+                <ul>
+                    <li>Why automatic? Opamps are getting very complicated.</li>
+                    <li>Why symbolic? Numeric simulation provides no guidance in <i>design</i> stage (but in verification stage)</li>
+                    <li>Why human-readable? Design needs interpretable information.</li>
+                </ul>
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#shi"></a></cite></h1>
+        <h2 class="frame__subtitle">Method explained</h2>
+        <div class="frame__content">
+            <p>
+                How do we reduce a transfer function $H(s)$ until it becomes human-readable?
+                <ol>
+                    <li>
+                        Write $H(s)$ in the form of
+                        $$
+                        H(s) = {\sum_{k=0}^{m} b_k s^k \over \sum_{k=0}^n a_k s^k}
+                        $$
+                        and every $b_k, a_k$ should be a sum of several multiplication, e.g.,
+                        $$
+                        b_0 = \underbrace{R_2 R_3 R_1 g_{\rm m1} g_{\rm m2} g_{\rm m3}}_\text{multiplication term 1} + \underbrace{R_3 R_1 g_{\rm m1} g_{\rm mf}}_\text{multiplication term 2}
+                        $$
+                    </li>
+                </ol>
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#shi"></a></cite></h1>
+        <h2 class="frame__subtitle">Method explained</h2>
+        <div class="frame__content">
+            <p>
+                <ol start="2">
+                    <li>
+                        Apply rules for every $b_k, a_k$
+                        <ol>
+                            <li>
+                                If any multiplication term does not contain compensation resistance $R_{\rm c}$, keep those multiplications with the <strong>most</strong> occurrence of $g_{\rm m}$.
+                                <p>
+                                    e.g., before,
+                                    $$
+                                    b_0 = \color{red}{\underbrace{R_2 R_3 R_1 g_{\rm m1} g_{\rm m2} g_{\rm m3}}_{3 g_{\rm m} :)}} + \underbrace{R_3 R_1 g_{\rm m1} g_{\rm mf}}_{2 g_{\rm m} :(}
+                                    $$
+                                    after,
+                                    $$
+                                    b_0 = R_2 R_3 R_1 g_{\rm m1} g_{\rm m2} g_{\rm m3}
+                                    $$
+                                </p>
+                            </li>
+                        </ol>
+                    </li>
+                </ol>
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#shi"></a></cite></h1>
+        <h2 class="frame__subtitle">Grammatical error</h2>
+        <div class="frame__content">
+            <figure>
+                <img src="2-error.png" alt="">
+                <figcaption>Ambiguity in paper<cite><a href="#shi"></a></cite></figcaption>
+            </figure>
+            <p>
+                This sentence can mean
+                <ul>
+                    <li>If <strong>no</strong> terms in a coefficient set involves $R_{\rm c}$...</li>
+                    <li>If <strong>not all</strong> term in a coefficient set involves $R_{\rm c}$...</li>
+                </ul>
+                I deduce that the 1st is right, because the 2nd contradicts with rule 2.
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#shi"></a></cite></h1>
+        <h2 class="frame__subtitle">Method explained</h2>
+        <div class="frame__content">
+            <p>
+                ...rules continued. For simplicity, we define each multiplication term as $b_{k, i}, a_{k, i}$.
+                <ol start="2">
+                    <li>
+                        Count the occurrence of $g_{\rm m}$ in each term $b_{k, i}, a_{k, i}$ that does not contain $R_{\rm c}$, and get the maximum of them $\#g_{\rm m, \max}$. For each term $b_{k, i}, a_{k, i}$, keep them only if they have the occurrence of $g_{\rm m}$ bigger than the sum of the occurrence of $R_{\rm c}$ and $\#g_{\rm m, \max}$, i.e., keep terms where
+                        $$
+                        \#g_{\rm m} \geq \#g_{\rm m, \max} + \#R_{\rm c}
+                        $$
+                        is satisfied.
+                    </li>
+                </ol>
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#shi"></a></cite></h1>
+        <h2 class="frame__subtitle">Method explained</h2>
+        <div class="frame__content">
+            <p>
+                ...e.g.,
+                $$
+                \begin{aligned}
+                b_1 &= R_1 R_2 R_3 g_{\rm m1} g_{\rm mf} C_{\rm c2} + \color{red}{R_{\rm c}} R_1 R_3 g_{\rm m1} g_{\rm f} C_{\rm c2} \\
+                &+ R_{\rm c} R_1 R_2 R_3 g_{\rm m1} g_{\rm m2} g_{\rm m3} C_{\rm c2} \\
+                &+ R_{\rm c} R_1 R_2 R_3 g_{\rm m1} g_{\rm m2} g_{\rm m3} C_{\rm c1} \\
+                &+ R_{\rm c} R_1 R_3 g_{\rm m1} g_{\rm mf} C_{\rm c1} - R_1 R_2 R_3 g_{\rm m1} g_{\rm m2} C_{\rm c2} \\
+                &- R_1 R_3 g_{\rm m1} C_{c1}
+                \end{aligned}
+                $$
+                rule 1 does not apply, because it contains terms with $R_{\rm c}$.
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#shi"></a></cite></h1>
+        <h2 class="frame__subtitle">Method explained</h2>
+        <div class="frame__content">
+            <p>
+                With rule 2, $\#g_{\rm m, \max} = 2$,
+                $$
+                \begin{aligned}
+                b_1 &= \color{red}{R_1 R_2 R_3 g_{\rm m1} g_{\rm mf} C_{\rm c2}} &&\to {\#g_m = 2, \#R_c = 0} \\
+                &+ R_{\rm c} R_1 R_3 g_{\rm m1} g_{\rm mf} C_{\rm c2} &&\to {\#g_m = 2, \#R_c = 1}\\
+                &+ \color{red}{R_{\rm c} R_1 R_2 R_3 g_{\rm m1} g_{\rm m2} g_{\rm m3} C_{\rm c2}} &&\to {\#g_m = 3, \#R_c = 1} \\
+                &+ \color{red}{R_{\rm c} R_1 R_2 R_3 g_{\rm m1} g_{\rm m2} g_{\rm m3} C_{\rm c1}} &&\to {\#g_m = 3, \#R_c = 1} \\
+                &+ R_{\rm c} R_1 R_3 g_{\rm m1} g_{\rm mf} C_{\rm c1} &&\to {\#g_m = 2, \#R_c = 1} \\
+                &\color{red}{- R_1 R_2 R_3 g_{\rm m1} g_{\rm m2} C_{\rm c2}} &&\to {\#g_m = 2, \#R_c = 0} \\
+                &- R_1 R_3 g_{\rm m1} C_{c1} &&\to {\#g_m = 1, \#R_c = 0}
+                \end{aligned}
+                $$
+                so
+                $$
+                \begin{aligned}
+                b_1 &= R_1 R_2 R_3 g_{\rm m1} g_{\rm mf} C_{\rm c2} + R_{\rm c} R_1 R_2 R_3 g_{\rm m1} g_{\rm m2} g_{\rm m3} C_{\rm c2} \\
+                &+ R_{\rm c} R_1 R_2 R_3 g_{\rm m1} g_{\rm m2} g_{\rm m3} C_{\rm c1} - R_1 R_2 R_3 g_{\rm m1} g_{\rm m2} C_{\rm c2}
+                \end{aligned}
+                $$
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#shi"></a></cite></h1>
+        <h2 class="frame__subtitle">Method explained</h2>
+        <div class="frame__content">
+            <p>
+                ...rules continued.
+                <ol start="3">
+                    <li>If all terms contain $R_{\rm c}$ and for all terms, $\#g_{\rm m} \lt \#R_{\rm c}$, then keep all terms.</li>
+                </ol>
+            </p>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title"><cite><a href="#shi"></a></cite></h1>
+        <h2 class="frame__subtitle">Conclusion</h2>
+        <div class="frame__content">
+            <ul>
+                <li>Very explicit rules that are suitable for programming implementation. I like it</li>
+                <li>Over-exaggerated, misleading title</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title">Until next time</h1>
+        <h2 class="frame__subtitle">Literatures</h2>
+        <div class="frame__content">
+            <ul class="bibliography">
+                <li class="bibliography__item" id="rocha">
+                    <span class="bibliography__item__authors">Frederico A.E. Rocha, et al.</span>
+                    <span class="bibliography__item__title">Electronic Design Automation of Analog ICs Combining Gradient Models with Multi-Objective Evolutionary Algorithms</span>
+                </li>
+                <li class="bibliography__item" id="phelps">
+                    <span class="bibliography__item__authors">Rodney Phelps, et al.</span>
+                    <span class="bibliography__item__title">Anaconda: Simulation-Based Synthesis of Analog Circuits Stochastic Pattern Search</span>
+                    <span class="bibliography__item__journal">IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems</span>
+                </li>
+                <li class="bibliography__item" id="liu">
+                    <span class="bibliography__item__authors">Bo Liu, et al.</span>
+                    <span class="bibliography__item__title">Analog circuit optimization system based on hybrid evolutionary algorithms</span>
+                    <span class="bibliography__item__journal">INTEGRATION, the VLSI journal</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="frame">
+        <h1 class="frame__title">Until next time</h1>
+        <h2 class="frame__subtitle">Experiments</h2>
+        <div class="frame__content">
+            <ul>
+                <li>Write a program that implements the rules described in <cite><a href="#shi"></a></cite></li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,249 @@
+@media print {
+    @page {
+        size: a4 landscape;
+        /* size: 296.8mm 210.1mm; */
+        margin: 0;
+        padding: 0;
+    }
+
+    a {
+        border: 0.1mm solid red;
+    }
+
+    /* .frame {
+        width: auto;
+        height: auto;
+    } */
+}
+
+@media screen {
+    .frame {
+        outline: 0.1mm solid black;
+        /* workaround: real size on screen. */
+        width: 297mm;
+        height: 210mm;
+    }
+}
+
+html {
+    /* font-size: 12mm; */
+    font-size: 10mm;
+    font-family: 'Latin Modern Roman', serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* align-items: center; */
+    counter-reset: frame;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.frame {
+    /* workaround: slightly smaller size on print. */
+    width: 296.8mm;
+    max-height: 210.1mm;
+    min-height: 200mm;
+    overflow: hidden;
+    page-break-before: always;
+    /* page-break-inside: avoid; */
+    counter-increment: frame;
+    padding: 10mm;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    position: relative;
+}
+
+.frame--hero {
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.frame__title {
+    font-size: 1rem;
+    /* margin: 0 0 -1rem 0; */
+    margin: 0;
+    max-width: 50%;
+}
+
+.frame__subtitle {
+    font-size: 1rem;
+    font-weight: normal;
+    /* margin: 0 0 -1rem 0; */
+    margin: 0;
+    max-width: 50%;
+}
+
+.frame__content {
+    width: 100%;
+}
+
+.frame__content--columned {
+    column-count: 2;
+}
+
+.frame__content--columned figure {
+    /* display: inline-block; */
+}
+
+.frame__page-number::before {
+    content: counter(frame);
+}
+
+.frame--page-number-reset {
+    counter-reset: frame;
+}
+
+.meta {
+    text-align: center;
+}
+
+.meta__title {
+    font-size: 2rem;
+}
+
+.meta__author, .meta__date, .meta__address {
+    font-size: 1rem;
+    font-weight: normal;
+}
+
+/* common element */
+p {
+    text-align: justify;
+}
+
+figure {
+    margin-left: 0;
+    margin-right: 0;
+    page-break-inside: avoid;
+    text-align: center;
+}
+
+figure > img {
+    max-width: 100%;
+    min-width: 75%;
+    display: block;
+    margin: 0 auto;
+}
+
+figure > figcaption {
+    /* font-size: 9pt; */
+    /* display: flex;
+    justify-content: center;
+    align-items: baseline; */
+    margin-top: 1em;
+    display: inline-block;
+    text-align: left;
+}
+
+figure > img + figcaption::before {
+    counter-increment: figure;
+    content: 'Figure ' attr(data-id) ':';
+    margin-right: 1em;
+    flex-shrink: 0;
+}
+
+figure > table {
+    margin: 0 auto;
+    border-top: 0.1mm solid black;
+    border-bottom: 0.1mm solid black;
+}
+
+figure > table + figcaption::before {
+    counter-increment: table;
+    content: 'Table ' attr(data-id) ':';
+    margin-right: 1em;
+    flex-shrink: 0;
+}
+
+.table--columned {
+    display: block;
+}
+
+.table--columned tbody {
+    display: block;
+    column-count: 2;
+}
+
+.table--columned tr {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* have to put this, if not, weasyprint will collapse. */
+.table--columned td {
+    display: block;
+}
+
+.text--fail, .text--differ {
+    color: red;
+}
+
+cite {
+    font-style: normal;
+}
+
+cite a::after {
+    /* it is a citation to an item in the bibliography */
+    content: "[" attr(data-target-id) "]";
+}
+
+a::after {
+    /* it is a referring hyperlink to a figure or table */
+    content: attr(data-target-id);
+}
+
+.bibliography {
+    counter-reset: bibitem;
+    list-style-type: none;
+    padding: 0;
+}
+
+.bibliography__item {
+    /* display: flex; */
+    position: relative;
+    margin-left: 2rem;
+}
+
+.bibliography__item::before {
+    counter-increment: bibitem;
+    content: "[" attr(data-id) "]";
+    position: absolute;
+    left: -2rem;
+}
+
+.bibliography__item__authors::after {
+    content: ",";
+}
+
+/* in case you forget `s` */
+.bibliography__item__author::after {
+    content: ",";
+}
+
+.bibliography__item__title::before {
+    content: '“';
+}
+
+.bibliography__item__title::after {
+    content: ',”';
+}
+
+.bibliography__item__journal {
+    font-style: italic;
+}
+
+.bibliography__item__other::before {
+    content: ","
+}
