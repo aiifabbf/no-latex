@@ -1,0 +1,238 @@
+@media print {
+    @page {
+        margin: calc(1in + 57pt) 0;
+        size: a4 portrait;
+    }
+
+    a {
+        border: 0.1mm solid red;
+    }
+}
+
+@media screen {
+    body {
+        margin: calc(1in + 57pt) auto;
+    }
+}
+
+html {
+    font-size: 10pt;
+    font-family: 'Latin Modern Roman', serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    padding: 0;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.meta {
+    text-align: center;
+}
+
+.meta__title {
+    font-size: 1.4rem;
+    font-weight: normal;
+}
+
+.meta__author {
+    font-size: 1.2rem;
+    font-weight: normal;
+}
+
+.meta__address {
+    font-size: 1rem;
+    font-weight: normal;
+    margin: 1rem;
+}
+
+.main {
+    counter-reset: figure table section;
+    margin-top: 2rem;
+}
+
+.main--columned {
+    column-count: 2;
+}
+
+/* main text styles. so it does not comply BEM naming conventions. */
+.main p {
+    text-indent: 2em;
+    text-align: justify;
+    margin: 0;
+}
+
+.main p:first-of-type {
+    text-indent: 0;
+}
+
+.main > section {
+    counter-reset: subsection;
+}
+
+.main > section > h1::before {
+    counter-increment: section;
+    content: counter(section);
+    padding-right: 1em;
+}
+
+.main > section > section {
+    counter-reset: subsubsection;
+}
+
+.main > section > section > h2 {
+    /* subsection title format */
+    font-size: 1rem;
+    margin: 1rem 0;
+}
+
+.main > section > section h2::before {
+    /* subsection format */
+    counter-increment: subsection;
+    content: counter(section) '.' counter(subsection);
+    padding-right: 1em;
+}
+
+.main > ul {
+    list-style-type: square;
+    list-style-position: inside;
+    padding-left: 0;
+}
+
+.main > ul > li {
+    margin: 5.5mm 0;
+}
+
+.main ol {
+    list-style-position: inside;
+    padding-left: 7.41mm;
+}
+
+.main ol > li {
+    margin: 2.75mm 0;
+}
+
+.main figure {
+    margin-left: 0;
+    margin-right: 0;
+    page-break-inside: avoid;
+    text-align: center;
+}
+
+.main figure > img {
+    max-width: 100%;
+    min-width: 50%;
+    display: block;
+    margin: 0 auto;
+}
+
+.main figure > figcaption {
+    font-size: 9pt;
+    /* display: flex;
+    justify-content: center;
+    align-items: baseline; */
+    margin-top: 1em;
+    display: inline-block;
+    text-align: left;
+}
+
+.main figure > img + figcaption::before {
+    counter-increment: figure;
+    content: 'Figure ' attr(data-id) ':';
+    margin-right: 1em;
+    flex-shrink: 0;
+}
+
+.main figure > table {
+    margin: 0 auto;
+    border-top: 0.1mm solid black;
+    border-bottom: 0.1mm solid black;
+}
+
+.main figure > table + figcaption::before {
+    counter-increment: table;
+    content: 'Table ' attr(data-id) ':';
+    margin-right: 1em;
+    flex-shrink: 0;
+}
+
+.table--columned {
+    display: block;
+}
+
+.table--columned tbody {
+    display: block;
+    column-count: 2;
+}
+
+.table--columned tr {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* have to put this, if not, weasyprint will collapse. */
+.table--columned td {
+    display: block;
+}
+
+.text--fail, .text--differ {
+    color: red;
+}
+
+cite {
+    font-style: normal;
+}
+
+cite a::after {
+    /* it is a citation to an item in the bibliography */
+    content: "[" attr(data-target-id) "]";
+}
+
+a::after {
+    /* it is a referring hyperlink to a figure or table */
+    content: attr(data-target-id);
+}
+
+.bibliography {
+    counter-reset: bibitem;
+    list-style-type: none;
+    padding: 0;
+}
+
+.bibliography__item {
+    /* display: flex; */
+    position: relative;
+    margin-left: 2rem;
+}
+
+.bibliography__item::before {
+    counter-increment: bibitem;
+    content: "[" attr(data-id) "]";
+    position: absolute;
+    left: -2rem;
+}
+
+.bibliography__item__authors::after {
+    content: ",";
+}
+
+.bibliography__item__title::before {
+    content: '“';
+}
+
+.bibliography__item__title::after {
+    content: ',”';
+}
+
+.bibliography__item__journal {
+    font-style: italic;
+}
+
+.bibliography__item__other::before {
+    content: ","
+}
