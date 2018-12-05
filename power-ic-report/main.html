@@ -24,6 +24,11 @@
         "HTML-CSS": {
             styles: {'.MathJax_Display': {"margin": 0}},
             linebreaks: { automatic: true }
+        },
+        "TeX": {
+            equationNumbers: {
+                autoNumber: "AMS"
+            }
         }
     });
     </script>
@@ -140,20 +145,20 @@
                     </ul>
                 </p>
                 <p>
-                    $$
+                    \begin{equation}
                         \begin{aligned}
                             H(s) &\approx {g_{\rm m1} g_{\rm m2} g_{\rm m3} R_1 R_2 R_3 (1 + s R_{\rm a} C_{\rm a}) \over (1 + s g_{\rm m2} g_{\rm m3} R_1 R_2 R_3 C_{\rm m1}) (1 + s k R_{\rm a} C_{\rm a})} \\
                             &\cdot {1 + s {C_{\rm m1} \over 2 g_{\rm mc}} \over 1 + s{C_1 C_3 \over k g_{\rm m2} g_{\rm m3} R_{\rm a} C_{\rm m1}} + s^2 {C_1 C_3 \over k g_{\rm m2} g_{\rm m3} g_{\rm mc} R_{\rm a}}}
-                        \end{aligned}
-                    $$
+                        \end{aligned}\label{eq-transfer-function}
+                    \end{equation}
                     where $k$ is defined as
                     $$
                         k = 1 + {C_3 \over g_{\rm m2} g_{\rm m3} R_1 R_{\rm a} C_{\rm m1}}
                     $$
-                    from this expression, we can derive that the system has 2 zeros $z_1, z_2$, and 4 poles $p_0, p_1, p_{21}, p_{22}$ with $p_{21}, p_{22}$ paired as conjugate poles (they share the same real value and their imagine values are opposite). We can also conclude that the DC gain is
-                    $$
+                    from Equation $\ref{eq-transfer-function}$, we can derive that the system has 2 zeros $z_1, z_2$, and 4 poles $p_0, p_1, p_{21}, p_{22}$ with $p_{21}, p_{22}$ paired as conjugate poles (they share the same real value and their imagine values are opposite). We can also conclude that the DC gain is
+                    \begin{equation}
                         A = g_{\rm m1} g_{\rm m2} g_{\rm m3} R_1 R_2 R_3
-                    $$
+                    \end{equation}
                 </p>
                 <p>
                     Ordered by their distance to the real axis, the zeros in their symbolic form are

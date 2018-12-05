@@ -6,10 +6,6 @@
     body {
         margin: 0;
     }
-
-    a {
-        border: 0.1mm solid red;
-    }
 }
 
 @media screen {
@@ -32,6 +28,7 @@ body {
 a {
     text-decoration: none;
     color: inherit;
+    border: 0.1mm solid red;
 }
 
 .meta {
