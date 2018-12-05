@@ -1,5 +1,9 @@
 # power-ic-report
 
+![preview](preview.svg)
+
+All hyperlinks shown above is clickable, including links after `Figure` and `Equation`.
+
 This is the report I wrote for Power IC course, written totally with web technologies. Check out the PDF for preview in this directory.
 
 This demo is, however, a little different from other demos, because I used JavaScript in it, and thus I had to use Chrome to print the PDF. I did not use WeasyPrint because I found that WeasyPrint can not handle too many formulas, otherwise it takes a few minutes to output. For papers that do not require a header or a footer (or any CSS Page Media spec Chrome has not yet implemented), print with Chrome is a good idea because

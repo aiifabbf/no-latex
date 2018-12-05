@@ -10,6 +10,27 @@ This is a demo showing how web technologies like HTML, CSS can smooth your scien
 - [Feature checklist](#Feature-checklist)
 - [Future](#Future)
 
+## Demos 
+
+<table>
+    <tr>
+        <td style="max-width: 49%;">
+            <img src="power-ic-report/preview.png" />
+        </td>
+        <td style="max-width: 49%;">
+            <img src="literature-review-slideshow/preview.png" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <a href="power-ic-report/Cascode Miller-Compensated Three-Stage Amplifier.pdf">scientific report</a>
+        </td>
+        <td>
+            <a href="literature-review-slideshow/Literature Review.pdf">slideshow</a>
+        </td>
+    </tr>
+</table>
+
 ## Quickstart
 
 1. `cd` to this project directory
@@ -70,6 +91,10 @@ Use what you would use on a real site, such as KaTeX and MathJax. Chrome outputs
 ### Auto-numbering
 
 Currently I use the `counter` feature in CSS to produce auto-numbered figure caption prefix like `Figure 2` and table caption prefix like `Table 2`.
+
+For equation numbering, first configure MathJax to auto number all equations delimited within the `equation` environment (`\begin{equation}...\end{equation}`), and then use `\label{foo}` right before `\end{equation}`, just as you usually do in LaTeX, and when referring to an equation, there are two ways
+- use `$\ref{foo}$`; this automatically puts the numbering of its targeted equation right after, like LaTeX
+- use a hyperlink with href set to `#mjx-eqn-foo`; does not (yet) put a proper numbering
 
 ### Figure and table reference
 
@@ -154,8 +179,8 @@ With Chrome and not weasyprint, you can
 - [ ] Styling headers or footers (like adding page number on page margin)
 - [x] Display math formulas e.g. `$$ a = b^2 $$` (does not require preprocessing)
 - [x] Inline math formulas e.g. `$ a = b^2 $` (does not require preprocessing)
-- [ ] Formula auto-numbering
-- [ ] Formula reference e.g. `\ref{eq:heat}`
+- [x] Formula auto-numbering
+- [x] Formula reference e.g. `\ref{eq:heat}`
 - [x] Figure and table auto-numbering e.g. `Figure 1`
 - [x] Figure and table reference e.g. `\ref{tab:heat}` (with JavaScript, check out `power-ic-report/auto-numering.js`)
 - [x] Columned layout e.g. `\twocolumn`
