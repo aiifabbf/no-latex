@@ -1,8 +1,20 @@
 # power-ic-report
 
-![preview](preview.svg)
+![preview](preview.png)
 
-All hyperlinks shown above is clickable, including links after `Figure` and `Equation`.
+- Auto-numbered figure captions
+
+    I do not manually input **Figure 3**.
+
+- Cross-references
+
+    A click on the red-boxed **3** in **as block 1 in Figure 3** will lead you to where Figure 3 is, both in browser and in the final PDF.
+
+    Cross-reference to equations is also working (shown at the bottom right **from Equation 1**). A click on **1** leads you to where Equation 1 is.
+
+- Equation numbering
+
+    Equations within a `equation` environment (delimited between `\begin{equation}` and `\end{equation}`) are auto-numbered like LaTeX. 
 
 This is the report I wrote for Power IC course, written totally with web technologies. Check out the PDF for preview in this directory.
 
@@ -23,7 +35,7 @@ If you want to write your own article based on this CSS and JS, you can refer to
     <figcaption>Caption here</figcaption>
 </figure>
 ```
-to produce figures, and
+to produce figures. You do not need to manually input the caption prefix like **Figure 3**. And
 ```html
 <figure id="label">
     <table>

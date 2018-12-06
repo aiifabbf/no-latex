@@ -1,5 +1,7 @@
 # literature-review-slideshow
 
+![preview](preview.png)
+
 This is a slideshow I wrote for a weekly group meeting, again written totally with web technologies. Check out the PDF for preview in this directory.
 
 This demo uses JavaScript, mostly MathJax, because it contains *many* formulas and it takes some seconds even for Chrome to process all of them. 
